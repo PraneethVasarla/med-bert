@@ -7,6 +7,9 @@ sys.path.append(os.getcwd())
 from datasets import Dataset,DatasetDict
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import nltk
+import random
+from nltk.corpus import wordnet
 
 
 
@@ -77,6 +80,29 @@ class NERDataset:
                 BIO.append("O")
 
         return BIO
+    
+    def synonym_replacement(self, sentence):
+        synonyms = []
+        for word in sentence:
+            for syn in wordnet.synsets(word):
+                for lemma in syn.lemmas():
+                    synonyms.append(lemma.name())
+
+        # If synonyms are found, replace a word with a synonym randomly
+        if synonyms:
+            random_synonym = random.choice(synonyms)
+            return random_synonym
+        else:
+            return word
+
+    def augment_data(self):
+        augmented_sentences = []
+        for index, row in self.df.iterrows():
+            sentence = row['sentence']
+            augmented_sentence = [self.synonym_replacement(word) for word in sentence]
+            augmented_sentences.append(augmented_sentence)
+
+        return augmented_sentences
         
     def prepare_hf_dataset(self):
         df = self.df.copy()
@@ -133,6 +159,12 @@ class NERDataset:
 
         df_new['bio_tags'] = df_new.apply(self.map_values, axis=1)
         df_new.drop(['id','content','labels'],axis=1)
+
+        self.df = df_new
+
+        augmented_sentences = self.augment_data()
+
+        df_new['augmented_sentence'] = augmented_sentences
 
         # Split the data into train and test sets
         train_df, test_df = train_test_split(df_new, test_size=0.25, random_state=42)

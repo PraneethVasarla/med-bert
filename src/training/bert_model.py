@@ -106,8 +106,8 @@ class CustomNERModel:
             login(token = access_token_write)
             print("Login to huggingface succesful")
 
-        epochs = config['bert']['EPOCHS']
-        learning_rate = config['bert']['LEARNING_RATE']
+        epochs = int(config['bert']['EPOCHS'])
+        learning_rate = float(config['bert']['LEARNING_RATE'])
 
         args = TrainingArguments(
             model_name,
