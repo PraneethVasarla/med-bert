@@ -1,0 +1,1 @@
+from .training.bert_model import CustomNERModel
