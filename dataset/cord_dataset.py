@@ -24,10 +24,36 @@ class CORD_Dataset:
             if all_rows:
                 self.df = df
             else:
-                mini_set = df[df['Sentence #']<=25498]
+                mini_set = df[df['Sentence #']<=48000]
                 self.df = mini_set
 
-            self.label_names = list(set([x for x in list(df['sentence'])]))
+            useful_labels = ['Other']
+            useful_labels.extend(['O',
+            'B-CHEMICAL',
+            'I-CHEMICAL',
+            'B-EUKARYOTE',
+            'I-EUKARYOTE',
+            'B-ORGANISM',
+            'I-ORGANISM',
+            'B-THERAPEUTIC_OR_PREVENTIVE_PROCEDURE',
+            'I-THERAPEUTIC_OR_PREVENTIVE_PROCEDURE',
+            'B-VIRUS',
+            'I-VIRUS',
+            'B-TISSUE',
+            'I-TISSUE',
+            'B-CORONAVIRUS',
+            'I-CORONAVIRUS',
+            'B-GENE_OR_GENOME',
+            'I-GENE_OR_GENOME',
+            'B-DISEASE_OR_SYNDROME',
+            'I-DISEASE_OR_SYNDROME',
+            'B-CELL',
+            'I-CELL'])
+
+            self.df['sentence'] = self.df['sentence'].apply(lambda x: x if x in useful_labels else "O")
+            self.df['sentence'] = self.df['sentence'].apply(lambda x: "O" if x=="Other" else x)
+
+            self.label_names = useful_labels
             self.df = self.df.groupby("Sentence #")[["Word","sentence"]].agg(list).reset_index()
 
             self.label2id = None

@@ -101,7 +101,7 @@ class CustomNERModel:
         
         self.model = model.to(self.device)
 
-        if push_to_hub:
+        if push_to_hub is True:
             access_token_write = config['huggingface']['ACCESS_TOKEN_WRITE']
             login(token = access_token_write)
             print("Login to huggingface succesful")
