@@ -109,7 +109,9 @@ class CutsomBertModel:
         
         self.model = model.to(self.device)
 
-        optimizer = AdamW(self.model.parameters(), lr=learning_rate)
+        weight_decay = float(config['bert']['WEIGHT_DECAY'])
+
+        optimizer = AdamW(self.model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 
         self.accelerator = Accelerator()
         self.prepare_data()
