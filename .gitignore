@@ -1,2 +1,4 @@
 .conda
 dataset/ner_covid_final_data_v3.csv
+bio-bert
+finetuned-roberta-accelerate-ner

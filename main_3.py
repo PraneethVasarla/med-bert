@@ -1,5 +1,5 @@
 from dataset import CORD_Dataset
-from src import CustomNERModel
+from src import CutsomBertModel
 import configparser
 
 config = configparser.ConfigParser()
@@ -13,8 +13,6 @@ print(dataset.df.head())
 
 model_checkpoint = config['huggingface']['MODEL_CHECKPOINT']
 
-model_trainer = CustomNERModel(dataset=dataset,model_checkpoint=model_checkpoint)
+model = CutsomBertModel(dataset=dataset,model_checkpoint=model_checkpoint)
 
-# model_trainer = CustomNERModel(dataset=dataset,model_checkpoint=model_checkpoint)
-
-model_trainer.train(model_name="bio-bert",push_to_hub=push_to_hub)
+model.train(model_name="finetuned-roberta-accelerate-ner",push_to_hub=push_to_hub)
