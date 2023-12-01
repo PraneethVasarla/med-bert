@@ -24,7 +24,7 @@ class CORD_Dataset:
             if all_rows:
                 self.df = df
             else:
-                mini_set = df[df['Sentence #']<=30] #48000
+                mini_set = df[df['Sentence #']<=10] #48000
                 self.df = mini_set
 
             useful_labels = ['Other']

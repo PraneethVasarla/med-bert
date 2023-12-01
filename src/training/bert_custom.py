@@ -7,7 +7,7 @@ import torch
 from torch.optim import AdamW
 from transformers import DataCollatorForTokenClassification,AutoTokenizer,AutoModelForTokenClassification,get_scheduler
 from accelerate import Accelerator
-from huggingface_hub import Repository, get_full_repo_name,login
+from huggingface_hub import Repository, get_full_repo_name,login,HfApi
 from tqdm.auto import tqdm
 import evaluate
 import configparser
@@ -122,8 +122,8 @@ class CutsomBertModel:
         
         self.lr_scheduler = self.get_scheduler()
 
-        if push_to_hub is True:
-            self.login_huggingface()
+        # if push_to_hub is True:
+        #     self.login_huggingface()
         
     def get_scheduler(self):
         epochs = int(config['bert']['EPOCHS'])
@@ -147,6 +147,19 @@ class CutsomBertModel:
         model_name = model_name
         repo_name = get_full_repo_name(model_name)
         self.repo = Repository(self.output_dir, clone_from=repo_name)
+
+    def push_to_huggingface(self,model_name = "finetuned-accelerate-ner"):
+        access_token_write = config['huggingface']['ACCESS_TOKEN_WRITE']
+        hfapi = HfApi(token=access_token_write)
+        repo_name = get_full_repo_name(model_name)
+        
+        hfapi.create_repo(repo_id=repo_name,exist_ok=True,repo_type='model')
+
+        hfapi.upload_folder(
+        folder_path=model_name,
+        repo_id=repo_name,
+        repo_type="model"
+        )
 
     def train(self,push_to_hub = None,model_name=None):
         print("Change config.ini to pass the hyperparameters")
@@ -202,8 +215,9 @@ class CutsomBertModel:
             if self.accelerator.is_main_process:
                 self.tokenizer.save_pretrained(self.output_dir)
                 if push_to_hub is True:
-                    self.repo.push_to_hub(
-                        commit_message=f"Training in progress epoch {epoch}", blocking=False
-                    )
+                    # self.repo.push_to_hub(
+                    #     commit_message=f"Training in progress epoch {epoch}", blocking=False
+                    # )
+                    self.push_to_huggingface(model_name=self.output_dir)
 
     
