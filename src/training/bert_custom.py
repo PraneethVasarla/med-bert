@@ -151,8 +151,8 @@ class CutsomBertModel:
     def push_to_huggingface(self,model_name = "finetuned-accelerate-ner"):
         access_token_write = config['huggingface']['ACCESS_TOKEN_WRITE']
         hfapi = HfApi(token=access_token_write)
-        repo_name = get_full_repo_name(model_name)
-        
+        repo_name = f"praneethvasarla/{model_name}"
+
         hfapi.create_repo(repo_id=repo_name,exist_ok=True,repo_type='model')
 
         hfapi.upload_folder(
@@ -181,8 +181,9 @@ class CutsomBertModel:
                 progress_bar.update(1)
 
             # Evaluation
+            
             self.model.eval()
-            for batch in self.eval_dataloader:
+            for batch in tqdm(self.eval_dataloader):
                 with torch.no_grad():
                     outputs = self.model(**batch)
 
