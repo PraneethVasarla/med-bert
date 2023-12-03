@@ -24,11 +24,10 @@ class CORD_Dataset:
             if all_rows:
                 self.df = df
             else:
-                mini_set = df[df['Sentence #']<=48000]
+                mini_set = df[df['Sentence #']<=10] #48000
                 self.df = mini_set
 
-            useful_labels = ['Other']
-            useful_labels.extend(['O',
+            useful_labels = ['O',
             'B-CHEMICAL',
             'I-CHEMICAL',
             'B-EUKARYOTE',
@@ -48,7 +47,7 @@ class CORD_Dataset:
             'B-DISEASE_OR_SYNDROME',
             'I-DISEASE_OR_SYNDROME',
             'B-CELL',
-            'I-CELL'])
+            'I-CELL']
 
             self.df['sentence'] = self.df['sentence'].apply(lambda x: x if x in useful_labels else "O")
             self.df['sentence'] = self.df['sentence'].apply(lambda x: "O" if x=="Other" else x)

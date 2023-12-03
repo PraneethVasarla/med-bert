@@ -13,9 +13,6 @@ print(dataset.df.head())
 
 model_checkpoint = config['huggingface']['MODEL_CHECKPOINT']
 
-dataset.prepare_hf_dataset()
-print(dataset)
-
 model_trainer = CustomNERModel(dataset=dataset,model_checkpoint=model_checkpoint)
 
 # model_trainer = CustomNERModel(dataset=dataset,model_checkpoint=model_checkpoint)
